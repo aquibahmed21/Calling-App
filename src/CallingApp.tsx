@@ -8,11 +8,22 @@ const CallingApp: React.FC = () => {
   const [callActive, setCallActive] = useState(false);
 
   useEffect(() => {
+    requestMediaPermissions();
     window.addEventListener("storage", handleStorageEvent);
     return () => {
       window.removeEventListener("storage", handleStorageEvent);
     };
   }, [peerConnection]);
+
+  const requestMediaPermissions = async () => {
+    try {
+      await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      console.log("Permissions granted for camera and microphone.");
+    } catch (error) {
+      console.error("Permissions denied for camera and microphone.", error);
+      alert("Camera and microphone permissions are required to start or join a call.");
+    }
+  };
 
   const handleStorageEvent = async (event: StorageEvent) => {
     if (!peerConnection) return;
